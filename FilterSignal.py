@@ -1,3 +1,4 @@
+from matplotlib.figure import Figure
 from utils.signal_processing.smoothing import smoothing
 from utils.signal_processing.downsample import downsample
 from utils.file_management.open_file import open_csv
@@ -40,21 +41,36 @@ class FilterSignal:
         except Exception as e:
             print("calculate power failed: ", e)
 
-    def plot_chart(self):
+    def plot_chart(self, returnAsEmbeddedFig=False, formatting=None):
+        fig = None
+        if returnAsEmbeddedFig:
+            fig = plt.figure(figsize=(10, 5), dpi=100)
+            plotObj = fig.add_subplot(111)
+        else:
+            plotObj = plt
+
         try:
-            plt.plot(self.downsampled_time,
-                     self.downsampled_current, color='orange')
-            plt.plot(self.downsampled_time,
-                     self.downsampled_voltage, color='green')
-            plt.plot(self.downsampled_time, self.raw_power,
-                     label='b4 smooth', color='red')
-            plt.plot(self.downsampled_time, self.smoothed_power,
-                     label='aft smooth', color='blue')
-            plt.show()
+            plotObj.plot(self.downsampled_time,
+                         self.downsampled_current, color='orange')
+            plotObj.plot(self.downsampled_time,
+                         self.downsampled_voltage, color='green')
+            plotObj.plot(self.downsampled_time, self.raw_power,
+                         label='b4 smooth', color='red')
+            plotObj.plot(self.downsampled_time, self.smoothed_power,
+                         label='aft smooth', color='blue')
+            plotObj.legend(
+                ["Current (A)", "Voltage (V)", "Raw Power (W)", "Smoothen Power (W)"])
+            if returnAsEmbeddedFig:
+                return fig
+
+            plotObj.show()
+
         except Exception as e:
             print("plot chart failed: ", e)
 
-    def save(self):
+    def save_csv(self, parameter='power'):
+        # todo :
+        # save to CSV
         pass
 
     def _fetch_data_series(self):
@@ -98,13 +114,3 @@ class FilterSignal:
 
     def _smoothing_power(self, smoothing_const):
         self.smoothed_power = smoothing(self.raw_power, smoothing_const)
-
-
-# def plot():
-#     plt.plot(downsampled_time, downsampled_current, color='orange')
-#     plt.plot(downsampled_time, downsampled_voltage, color='green')
-#     plt.plot(downsampled_time, power, label='b4 smooth', color='red')
-#     plt.plot(downsampled_time, smoothen_power,
-#              label='aft smooth', color='blue')
-
-#     plt.show()
