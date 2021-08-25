@@ -4,7 +4,7 @@
 ### Build to single exe
 
 ```shell
-pyinstaller --onefile --noconsole gui.py
+pyinstaller --onefile --noconsole src/gui.py
 ```
 
 ### Running Executable
